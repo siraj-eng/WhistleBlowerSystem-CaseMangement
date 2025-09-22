@@ -14,6 +14,7 @@ namespace whistleblowerConsoleApp
         {
             public string Code { get; set; }    // Unique code (string so we can prefix REP)
             public string Details { get; set; } // Report text
+            public string Assignedto { get; set; } //Person investigating the report
         }
 
         static void Main(string[] args)
@@ -161,7 +162,7 @@ namespace whistleblowerConsoleApp
             Console.Write("Enter your password: ");
             string input = Console.ReadLine();
 
-            if (String.IsNullOrWhiteSpace(input)) 
+            if (String.IsNullOrWhiteSpace(input))
                 return;
 
             if (password == input)
@@ -181,9 +182,12 @@ namespace whistleblowerConsoleApp
                 {
                     case "1":
                         Console.WriteLine("\n Logged in as Admin. You have full system access");
+                        viewReports();
                         break;
                     case "2":
                         Console.WriteLine("\n Logged in as a Compliance officer. You can manage cases.");
+                        ShowReportsToCompliance();
+                        AssignReports();
                         break;
                     case "3":
                         Console.WriteLine("\n Logged in as investigator. You can investigate assigned reports");
@@ -203,6 +207,34 @@ namespace whistleblowerConsoleApp
 
             }
         }
-            
+
+        static void ShowReportsToCompliance()
+        {
+            Console.WriteLine("----- Reports for Compliance Team -----");
+
+            for (int i = 0; i < Reports.Count; i++)
+            {
+                var report = Reports[i];
+                Console.WriteLine($"{i + 1}. {report.Details} " +
+                                  $"{(string.IsNullOrWhiteSpace(report.Assignedto) ? "(Unassigned)" : $"Assigned to: {report.Assignedto}")}");
+            }
+
+            Console.WriteLine("--------------------------------------");
+        }
+
+        static void AssignReports()
+        {
+            for (int i = 0; i < Reports.Count; i++)
+            {
+                var reports = Reports[i];
+
+                if (String.IsNullOrWhiteSpace(reports.Assignedto))
+                {
+                    Console.WriteLine($"Enter the investigators name for the Report {reports.Details}");
+                    reports.Assignedto = Console.ReadLine();
+
+                }
+            }
+        }
     }
 }
