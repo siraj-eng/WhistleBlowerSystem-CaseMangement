@@ -1,11 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel;
+using System.Text.Json;
 
 namespace whistleblowerConsoleApp
 {
     class Program
     {
         static List<Report> Reports = new List<Report>();
+
+        static string filepath = "reports.json";
 
         // User-defined Report class
         class Report
@@ -16,6 +18,9 @@ namespace whistleblowerConsoleApp
 
         static void Main(string[] args)
         {
+            //Load Existing Reports
+            LoadReports();
+
             // Welcoming message
             Console.WriteLine("====================================");
             Console.WriteLine("   Welcome to the Whistleblower App  ");
@@ -70,6 +75,7 @@ namespace whistleblowerConsoleApp
             };
 
             Reports.Add(newReport);
+            SaveReports();
 
             Console.WriteLine($"\n✅ Report submitted successfully! Your unique code is {code}.");
         }
@@ -79,17 +85,44 @@ namespace whistleblowerConsoleApp
         {
             Console.WriteLine("\n------ Submitted Reports ---------");
 
-            if (Reports.Count == 0)
+            string password = "admin";
+
+            Console.Write("Enter the password");
+            string input = Console.ReadLine();
+
+            if (input == password)
             {
-                Console.WriteLine("No reports have been submitted yet.");
+                if (Reports.Count == 0)
+                {
+                    Console.WriteLine("No reports have been submitted yet.");
+                }
+                else
+                {
+                    for (int i = 0; i < Reports.Count; i++)
+                    {
+                        Console.WriteLine($"\nReport #{i + 1}");
+                        Console.WriteLine($"Details: {Reports[i].Details}");
+                    }
+                }
             }
             else
             {
-                for (int i = 0; i < Reports.Count; i++)
-                {
-                    Console.WriteLine($"\nReport #{i + 1}");
-                    Console.WriteLine($"Details: {Reports[i].Details}");
-                }
+                return;
+            }
+        }
+
+        static void SaveReports()
+        {
+            string json = JsonSerializer.Serialize(Reports, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(filepath, json);
+        }
+
+        static void LoadReports()
+        {
+            if (File.Exists(filepath))
+            {
+                string json = File.ReadAllText(filepath);
+                Reports = JsonSerializer.Deserialize<List<Report>>(json) ?? new List<Report>();
             }
         }
     }
