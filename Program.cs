@@ -6,13 +6,12 @@ namespace whistleblowerConsoleApp
     class Program
     {
         static List<Report> Reports = new List<Report>();
-        static int ReportId = 0;
 
+        // User-defined Report class
         class Report
         {
-            public int Code {  get; set; }
-            public string Details { get; set; }
-             
+            public string Code { get; set; }    // Unique code (string so we can prefix REP)
+            public string Details { get; set; } // Report text
         }
 
         static void Main(string[] args)
@@ -24,40 +23,72 @@ namespace whistleblowerConsoleApp
             Console.WriteLine("Report unethical practices securely!");
             Console.WriteLine();
 
-            submitReport(); 
-            ViewReport();
+            bool running = true;
+            while (running)
+            {
+                Console.WriteLine("\nMenu:");
+                Console.WriteLine("1. Submit a Report");
+                Console.WriteLine("2. View Submitted Reports");
+                Console.WriteLine("3. Exit");
+                Console.Write("Choose an option (1-3): ");
+                string choice = Console.ReadLine();
+
+                switch (choice)
+                {
+                    case "1":
+                        submitReport();
+                        break;
+                    case "2":
+                        viewReports();
+                        break;
+                    case "3":
+                        running = false;
+                        Console.WriteLine("\nExiting the app. Goodbye!");
+                        break;
+                    default:
+                        Console.WriteLine("\n❌ Invalid choice, please try again.");
+                        break;
+                }
+            }
         }
 
         // Submit the report
         static void submitReport()
         {
             Console.WriteLine("\n------ Report Submission ---------");
-            Console.Write("\nExplain in detail what happened: ");
+            Console.Write("Explain in detail what happened: ");
             string report = Console.ReadLine();
 
+            // Generate unique code
             Random rnd = new Random();
             string code = "REP" + rnd.Next(1000, 9999);
-            
-            Report NewReport = new Report();
-            NewReport.Code = code;
-            NewReport.Details = report;
 
-            Reports.Add(NewReport);
+            Report newReport = new Report
+            {
+                Code = code,
+                Details = report
+            };
 
-            Console.WriteLine($"You have successfully submitted a report and your unique code is{code}.");
+            Reports.Add(newReport);
+
+            Console.WriteLine($"\n✅ Report submitted successfully! Your unique code is {code}.");
         }
 
-        //View Report
-        static void ViewReport()
+        // View reports
+        static void viewReports()
         {
-            if (Reports.Count > 0)
-                Console.WriteLine("No reports yet");
+            Console.WriteLine("\n------ Submitted Reports ---------");
+
+            if (Reports.Count == 0)
+            {
+                Console.WriteLine("No reports have been submitted yet.");
+            }
             else
             {
-                for (var i = 0; i < Reports.Count; i++)
+                for (int i = 0; i < Reports.Count; i++)
                 {
-                    Console.WriteLine("\n-------All Reports---------");
-                    Console.WriteLine($"Reports {i + 1} {Reports[i]}");
+                    Console.WriteLine($"\nReport #{i + 1}");
+                    Console.WriteLine($"Details: {Reports[i].Details}");
                 }
             }
         }
