@@ -111,6 +111,8 @@ namespace whistleblowerConsoleApp
                     {
                         Console.WriteLine($"\nReport #{i + 1}");
                         Console.WriteLine($"Details: {Reports[i].Details}");
+                        Console.WriteLine($"Assigned to: {Reports[i].Assignedto}");
+                        SaveReports();
                     }
                 }
             }
@@ -137,21 +139,26 @@ namespace whistleblowerConsoleApp
 
         static void CheckMyreport()
         {
-            Console.Write("\nEnter the code to view your report");
+            Console.Write("\nEnter the code to view your report: ");
             string entry = Console.ReadLine();
 
-            if (String.IsNullOrWhiteSpace(entry))
+            if (string.IsNullOrWhiteSpace(entry))
                 return;
 
-            var report = Reports.Find(r => r.Code == entry);
+            // Trim spaces and ignore case
+            entry = entry.Trim();
+
+            var report = Reports.Find(r => string.Equals(r.Code?.Trim(), entry, StringComparison.OrdinalIgnoreCase));
 
             if (report != null)
             {
-                Console.WriteLine("\nHere is your Report");
-                Console.WriteLine("Report Code" + report.Code + "Report Details" + report.Details);
+                Console.WriteLine("\nHere is your Report:");
+                Console.WriteLine($"Code: {report.Code}, Details: {report.Details}, Assigned To: {report.Assignedto}");
             }
             else
-                Console.WriteLine("No such Report existss!!!!!!");
+            {
+                Console.WriteLine("No such Report exists!!!!!!");
+            }
 
         }
 
@@ -217,6 +224,7 @@ namespace whistleblowerConsoleApp
                 var report = Reports[i];
                 Console.WriteLine($"{i + 1}. {report.Details} " +
                                   $"{(string.IsNullOrWhiteSpace(report.Assignedto) ? "(Unassigned)" : $"Assigned to: {report.Assignedto}")}");
+                SaveReports();
             }
 
             Console.WriteLine("--------------------------------------");
@@ -232,7 +240,7 @@ namespace whistleblowerConsoleApp
                 {
                     Console.WriteLine($"Enter the investigators name for the Report {reports.Details}");
                     reports.Assignedto = Console.ReadLine();
-
+                    SaveReports();
                 }
             }
         }
