@@ -34,7 +34,9 @@ namespace whistleblowerConsoleApp
                 Console.WriteLine("\nMenu:");
                 Console.WriteLine("1. Submit a Report");
                 Console.WriteLine("2. View Submitted Reports");
-                Console.WriteLine("3. Exit");
+                Console.WriteLine("3. Check your reports and track");
+                Console.WriteLine("4.Compliance team");
+                Console.WriteLine("5. Exit");
                 Console.Write("Choose an option (1-3): ");
                 string choice = Console.ReadLine();
 
@@ -47,6 +49,12 @@ namespace whistleblowerConsoleApp
                         viewReports();
                         break;
                     case "3":
+                        CheckMyreport();
+                        break;
+                    case "4":
+                        ComplianceTeam();
+                        break;
+                    case "5":
                         running = false;
                         Console.WriteLine("\nExiting the app. Goodbye!");
                         break;
@@ -87,7 +95,7 @@ namespace whistleblowerConsoleApp
 
             string password = "admin";
 
-            Console.Write("Enter the password");
+            Console.Write("Enter the password: ");
             string input = Console.ReadLine();
 
             if (input == password)
@@ -125,5 +133,76 @@ namespace whistleblowerConsoleApp
                 Reports = JsonSerializer.Deserialize<List<Report>>(json) ?? new List<Report>();
             }
         }
+
+        static void CheckMyreport()
+        {
+            Console.Write("\nEnter the code to view your report");
+            string entry = Console.ReadLine();
+
+            if (String.IsNullOrWhiteSpace(entry))
+                return;
+
+            var report = Reports.Find(r => r.Code == entry);
+
+            if (report != null)
+            {
+                Console.WriteLine("\nHere is your Report");
+                Console.WriteLine("Report Code" + report.Code + "Report Details" + report.Details);
+            }
+            else
+                Console.WriteLine("No such Report existss!!!!!!");
+
+        }
+
+        static void ComplianceTeam()
+        {
+            var password = "Compliance-Team";
+
+            Console.Write("Enter your password: ");
+            string input = Console.ReadLine();
+
+            if (String.IsNullOrWhiteSpace(input)) 
+                return;
+
+            if (password == input)
+            {
+                Console.WriteLine("\n----Welcome to the Compliance team------");
+                Console.WriteLine("Select your role");
+                Console.WriteLine("1. Admin");
+                Console.WriteLine("2. Compliance officer");
+                Console.WriteLine("3.Investigator");
+                Console.WriteLine("4.HR/Legal");
+
+                Console.Write("Enter your choice(1-4)");
+                string choice = Console.ReadLine();
+
+
+                switch (choice)
+                {
+                    case "1":
+                        Console.WriteLine("\n Logged in as Admin. You have full system access");
+                        break;
+                    case "2":
+                        Console.WriteLine("\n Logged in as a Compliance officer. You can manage cases.");
+                        break;
+                    case "3":
+                        Console.WriteLine("\n Logged in as investigator. You can investigate assigned reports");
+                        break;
+                    case "4":
+                        Console.WriteLine("\n Logged in as HR/Legal. You can handle employee-related issues.");
+                        // here you can add HR/legal functions
+                        break;
+                    default:
+                        Console.WriteLine("\n Invalid choice.");
+                        break;
+                }
+            }
+            else
+            {
+                Console.WriteLine("\n Access denied. Wrong password.");
+
+            }
+        }
+            
     }
 }
