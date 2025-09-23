@@ -15,6 +15,7 @@ namespace whistleblowerConsoleApp
             public string Code { get; set; }    // Unique code (string so we can prefix REP)
             public string Details { get; set; } // Report text
             public string Assignedto { get; set; } //Person investigating the report
+            public string Status { get; set; } // Investigator to update the status
         }
 
         static void Main(string[] args)
@@ -181,7 +182,7 @@ namespace whistleblowerConsoleApp
                 Console.WriteLine("3.Investigator");
                 Console.WriteLine("4.HR/Legal");
 
-                Console.Write("Enter your choice(1-4)");
+                Console.Write("Enter your choice(1-4) ");
                 string choice = Console.ReadLine();
 
 
@@ -198,6 +199,7 @@ namespace whistleblowerConsoleApp
                         break;
                     case "3":
                         Console.WriteLine("\n Logged in as investigator. You can investigate assigned reports");
+                        UpdateReportstatus();
                         break;
                     case "4":
                         Console.WriteLine("\n Logged in as HR/Legal. You can handle employee-related issues.");
@@ -242,6 +244,52 @@ namespace whistleblowerConsoleApp
                     reports.Assignedto = Console.ReadLine();
                     SaveReports();
                 }
+            }
+        }
+
+        static void UpdateReportstatus()
+        {
+
+            Console.Write("\nEnter your Password: ");
+            string input = Console.ReadLine();
+
+            var password = "investigator";
+
+            if (String.IsNullOrWhiteSpace(input))
+                return;
+
+            if (password == input)
+            {
+
+                Console.Write("\n-------Hey...!Welcome You can now successfully update the report status-------");
+
+                for (int i = 0; i < Reports.Count; i++)
+                {
+                    var report = Reports[i];
+
+                    Console.WriteLine($"\nReport Code: {report.Code}");
+                    Console.WriteLine($"Details: {report.Details}");
+                    Console.WriteLine($"Current Status: {(String.IsNullOrWhiteSpace(report.Status) ? "No status yet" : report.Status)}");
+
+                    Console.WriteLine("Do you want to update this status (y/n)");
+                    string choice = Console.ReadLine()?.Trim().ToLower();
+
+                    if(choice == "y")
+                    {
+                        Console.Write("\n Plz update the status: ");
+                        report.Status = Console.ReadLine();
+                        Console.WriteLine($"Status updated to: {report.Status}");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Skipped updating this report.");
+                    }
+                }
+
+            }
+            else
+            {
+                Console.WriteLine("Wrong Password Access Denied!!!");
             }
         }
     }
