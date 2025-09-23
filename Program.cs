@@ -16,6 +16,7 @@ namespace whistleblowerConsoleApp
             public string Details { get; set; } // Report text
             public string Assignedto { get; set; } //Person investigating the report
             public string Status { get; set; } // Investigator to update the status
+            public string Notes { get; set; } //Notes from Hr and audit officer
         }
 
         static void Main(string[] args)
@@ -203,7 +204,7 @@ namespace whistleblowerConsoleApp
                         break;
                     case "4":
                         Console.WriteLine("\n Logged in as HR/Legal. You can handle employee-related issues.");
-                        // here you can add HR/legal functions
+                        HrAudit();
                         break;
                     default:
                         Console.WriteLine("\n Invalid choice.");
@@ -285,12 +286,65 @@ namespace whistleblowerConsoleApp
                         Console.WriteLine("Skipped updating this report.");
                     }
                 }
-
+                SaveReports();
             }
             else
             {
                 Console.WriteLine("Wrong Password Access Denied!!!");
             }
+        }
+
+        static void HrAudit()
+        {
+            Console.WriteLine("\nEnter your password!");
+            string input = Console.ReadLine();
+
+            var password = "hr";
+
+            if (String.IsNullOrWhiteSpace(input))
+                return;
+
+            if (password == input)
+            {
+                Console.WriteLine("\n-----Reports available for HR review------");
+
+                for (int i = 0; i < Reports.Count; i++)
+                {
+                    var report = Reports[i];
+
+                    Console.WriteLine($"\n Report Code   : {report.Code}");
+                    Console.WriteLine($" Report Details: {report.Details}");
+                    Console.WriteLine($" Report Status : {report.Status}");
+                    Console.WriteLine($" Current Notes : {(String.IsNullOrWhiteSpace(report.Notes) ? "No notes added yet" : report.Notes)}");
+
+                    Console.Write("\nDo you wish to add or update notes? (y/n): ");
+                    string choice = Console.ReadLine().Trim().ToLower();
+
+                    if (choice == "y")
+                    {
+                        Console.WriteLine("Enter your final remarks:");
+                        string newNotes = Console.ReadLine();
+
+                        // If HR already had notes, append instead of overwriting
+                        if (!String.IsNullOrWhiteSpace(report.Notes))
+                            report.Notes += "\n[Update]: " + newNotes;
+                        else
+                            report.Notes = newNotes;
+
+                        Console.WriteLine($"✔ You have successfully updated report {report.Code}");
+                    }
+                    else
+                    {
+                        Console.WriteLine(">>> Skipped notes update for this report");
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("❌ Wrong Password. Access denied!");
+            }
+
+            SaveReports();
         }
     }
 }
